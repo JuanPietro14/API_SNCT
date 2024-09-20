@@ -1,29 +1,28 @@
-
-//aqui haverá a requisição do js para a biblioteca express. vai facilitar o desenvolvimento do cod
+// requisição do express
 const express = require('express');
 
-//aqui haverá a requisição com o bd. mysql2 é a biblioteca para node q configura um bd
-//const mysql = require('mysql2');
-
-
-//require ('dotenv').config();
-
-//cria o app express para rodar o servidor
+// Criação da aplicação express
 const app = express();
 
-//definirá a porta que alocará o server
-const PORT = 3000;
+// Definindo a porta do servidor
+const PORT = process.env.PORT || 3000;
 
-//const db = mysql.createCOnnection({})
+// Middleware para servir arquivos estáticos da pasta 'public'
+app.use(express.static('public'));
 
-//vai configurar o middleware express. irá converter as requisições json para js
+// Configuração do middleware para aceitar JSON
 app.use(express.json());
 
-//vai importar as rotas no servidor
+// Importar as rotas da API
 const dataRoutes = require('./routes/dataRoutes');
 app.use('/api', dataRoutes);
 
-//coloca o server em funcionamento na porta especificada
+// Adicionar uma rota para a URL raiz '/'
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+// Inicializar o servidor
 app.listen(PORT, () => {
-    console.log('Servidor rodando na porta ${PORT}');
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
