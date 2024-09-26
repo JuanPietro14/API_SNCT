@@ -44,17 +44,6 @@ body, html {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Oculta o texto inicialmente */
-.card h2, .card p {
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out; /* AnimaÃ§Ã£o de opacidade */
-}
-
-/* Quando o mouse estÃ¡ sobre o card, o texto aparece */
-.card:hover h2, .card:hover p {
-    opacity: 1; /* Texto aparece */
-}
-
 .card h2 {
     margin-bottom: 15px;
     font-size: 1.8rem;

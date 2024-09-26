@@ -1,10 +1,5 @@
-// requisição do express
 const express = require('express');
-
-// Criação da aplicação express
 const app = express();
-
-// Definindo a porta do servidor
 const PORT = process.env.PORT || 3000;
 
 // Middleware para servir arquivos estáticos da pasta 'public'
