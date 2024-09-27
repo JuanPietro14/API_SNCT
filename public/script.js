@@ -26,4 +26,6 @@ function fetchSensorData() {
 // Chama a função ao carregar a página
 window.onload = fetchSensorData;
 
-
+setInterval(() => {
+    window.location.reload(); // Recarrega a página
+}, 5000);
