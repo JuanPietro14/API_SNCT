@@ -23,6 +23,15 @@ function fetchSensorData() {
         .catch(error => console.error('Erro ao buscar dados:', error));
 }
 
+function toggleHelpCard() {
+    const helpCard = document.getElementById('helpCard');
+    if (helpCard.style.display === 'none' || helpCard.style.display === '') {
+        helpCard.style.display = 'block';
+    } else {
+        helpCard.style.display = 'none';
+    }
+}
+
 // Chama a função ao carregar a página
 window.onload = fetchSensorData;
 
