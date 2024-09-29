@@ -9,7 +9,17 @@
 </head>
 <body>
     
-  
+  <div class="help-button" onclick="toggleHelpCard()">?</div>
+
+    
+    <div class="help-card" id="helpCard">
+        <h2>Como utilizar o site</h2>
+        <p>Este site mostra dados em tempo real sobre a temperatura, pressão e umidade do ar.</p>
+        <p>Os dados são atualizados automaticamente a cada 5 segundos.</p>
+        <p>Clique nos ícones indicados nos cards para observar as informações descritas.</p>
+        <button onclick="toggleHelpCard()">Fechar</button>
+    </div>
+
 
     <div class="card-container">
         <div class="card">
