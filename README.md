@@ -38,4 +38,4 @@ Smart Weather Station (temperature, humidity, atmospheric pressure) and send thi
 - **Banco de Dados**: MySQL.
 - **Front-End**: HTML5, CSS3 e Javascript.
 - **Servidores**: Express
-
+- **Sensorese Controladores**: bmp 180, dht 22, esp32 e módulo relé.
