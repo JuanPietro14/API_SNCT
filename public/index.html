@@ -1,45 +1,132 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estação Meteorológica</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Fonte Poppins do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Link para biblioteca de ícones (FontAwesome) -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    
-  <div class="help-button" onclick="toggleHelpCard()">?</div>
 
-    
-    <div class="help-card" id="helpCard">
-        <h2>Como utilizar o site</h2>
-        <p>Este site mostra dados em tempo real sobre a temperatura, pressão e umidade do ar.</p>
-        <p>Os dados são atualizados automaticamente a cada 5 segundos.</p>
-        <p>Clique nos ícones indicados nos cards para observar as informações descritas.</p>
-        <button onclick="toggleHelpCard()">Fechar</button>
-    </div>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <h1>Estação Meteorolócica</h1>
+        <nav>
+            <ul>
+                <li><a href="#dados-atualizados">Dados Atuais</a></li>
+                <li><a href="#dados-historicos">Dados Históricos</a></li>
+            </ul>
+        </nav>
+    </header>
 
-
-    <div class="card-container">
-        <div class="card">
-            <h2>Temperatura</h2>
-            <p>A temperatura agora é X.</p>
+    <!-- Seção de Dados Atuais -->
+    <section id="dados-atualizados" class="dados-atualizados">
+        <h2>Dados Meteorológicos Atuais</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-thermometer-half"></i>
+                <h3>Temperatura</h3>
+                <p><span id="temperatura">25°C</span></p>
+            </div>
+            <div class="card">
+                <i class="fas fa-tint"></i>
+                <h3>Umidade</h3>
+                <p><span id="umidade">60%</span></p>
+            </div>
+            <div class="card">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Pressão</h3>
+                <p><span id="pressao">1015 hPa</span></p>
+            </div>
         </div>
-        <div class="card">
-            <h2>Pressão Atm</h2>
-            <p>A pressão agora é X.</p>
-        </div>
-        <div class="card">
-            <h2>Umidade</h2>
-            <p>A umidade agora é X.</p>
-        </div>
-    </div>
+    </section>
 
-    <footer>
-        <p>INFO0122 - Todos os direitos reservados</p>
+    <!-- Seção de Dados Históricos -->
+    <section id="dados-historicos" class="dados-historicos">
+        <h2>Dados Históricos</h2>
+
+        <!-- Filtro de Pesquisa -->
+        <div class="pesquisa">
+            <label for="dataInicial">Data Inicial:</label>
+            <input type="date" id="dataInicial">
+            <label for="horaInicial">Hora Inicial:</label>
+            <input type="time" id="horaInicial">
+
+            <label for="dataFinal">Data Final:</label>
+            <input type="date" id="dataFinal">
+            <label for="horaFinal">Hora Final:</label>
+            <input type="time" id="horaFinal">
+
+            <button onclick="filtrarHistorico()">Buscar</button>
+        </div>
+
+        <!-- Tabela de Dados Históricos -->
+        <table id="historicoTable">
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Temperatura (°C)</th>
+                    <th>Umidade (%)</th>
+                    <th>Pressão (hPa)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>12/10/2024 10:00</td>
+                    <td>24°C</td>
+                    <td>65%</td>
+                    <td>1012 hPa</td>
+                </tr>
+                <tr>
+                    <td>12/10/2024 09:00</td>
+                    <td>22°C</td>
+                    <td>70%</td>
+                    <td>1010 hPa</td>
+                </tr>
+                <!-- Mais registros podem ser adicionados aqui -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>Estação Meteorológica &copy; 2024</p>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Script para filtrar os dados históricos -->
+    <script>
+        function filtrarHistorico() {
+            var dataInicial = document.getElementById('dataInicial').value;
+            var horaInicial = document.getElementById('horaInicial').value;
+            var dataFinal = document.getElementById('dataFinal').value;
+            var horaFinal = document.getElementById('horaFinal').value;
+
+            var table = document.getElementById('historicoTable');
+            var tr = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < tr.length; i++) {
+                var td = tr[i].getElementsByTagName('td')[0]; // Coluna de data/hora
+                if (td) {
+                    var txtValue = td.textContent || td.innerText;
+                    var dataHora = new Date(txtValue);
+                    
+                    var filtroInicial = new Date(dataInicial + 'T' + horaInicial);
+                    var filtroFinal = new Date(dataFinal + 'T' + horaFinal);
+                    
+                    if (dataHora >= filtroInicial && dataHora <= filtroFinal) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
 </body>
 </html>
