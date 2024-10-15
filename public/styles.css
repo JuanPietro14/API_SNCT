@@ -1,145 +1,148 @@
-* {
+/* Estilo Global */
+body {
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    background-color: #87CEEB;
+    color: #333;
+    line-height: 1.6;
 }
 
-body, html {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #161623; /* Cor de fundo */
+h1, h2 {
+    color: #1E3A8A; /* Azul escuro */
+    text-align: center;
 }
 
-
-
-.card-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+h3 {
+    color: #FFFFFF;
 }
 
-.card {
-    background-color: #2e2e48; /* Cor do card */
-    color: #ffffff; /* Texto em branco */
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    width: 300px;
-    height: 350px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Cabeçalho */
+.header {
+    background-color: #1E3A8A; /* Azul escuro */
+    color: white;
+    padding: 20px;
     text-align: center;
     position: relative;
 }
 
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+.header .logo img {
+    height: 50px;
+    width: auto;
 }
 
-.card h2 {
-    margin-bottom: 15px;
-    font-size: 1.8rem;
+.header nav ul {
+    list-style: none;
+    padding: 0;
 }
 
-.card p {
-    font-size: 1.2rem;
-    color: #b0b0c3; /* Texto em cinza claro */
+.header nav ul li {
+    display: inline;
+    margin: 0 15px;
 }
 
-/* AnimaÃ§Ã£o de entrada suave dos cards */
-@keyframes pop {
-    0% {
-        transform: scale(0.8);
-    }
-    100% {
-        transform: scale(1);
-    }
+.header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Seção de Dados Atuais */
+.dados-atualizados {
+    padding: 20px;
+    background-color: #E0E0E0;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .card {
-    animation: pop 0.6s ease-in-out;
-}
-
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    background-color: #2e2e48; /* Cor de fundo semelhante aos cards */
-    color: #ffffff; /* Texto branco */
-    font-size: 0.9rem;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
-
-
-
-/* Botão de Interrogação */
-.help-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #007bff;
+    background-color: #1E3A8A;
     color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    text-align: center;
-    line-height: 40px;
-    cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-}
-
-.help-button:hover {
-    background-color: #0056b3;
-}
-
-/* Card de Ajuda */
-.help-card {
-    position: fixed;
-    top: 50px;
-    right: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     padding: 20px;
-    max-width: 300px;
-    display: none; /* Inicialmente escondido */
-    z-index: 1000;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    margin: 10px;
 }
 
-.help-card h2 {
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-}
-
-.help-card p {
+.card i {
+    font-size: 50px;
     margin-bottom: 10px;
-    font-size: 1rem;
-    color: #333;
 }
 
-.help-card button {
-    background-color: #007bff;
-    color: white;
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Seção de Dados Históricos */
+.dados-historicos {
+    padding: 20px;
+    background-color: #F5F5F5;
+}
+
+.pesquisa {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.pesquisa label {
+    margin-right: 10px;
+}
+
+.pesquisa input[type="date"],
+.pesquisa input[type="time"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.pesquisa button {
+    padding: 10px 20px;
     border: none;
-    padding: 10px 15px;
+    background-color: #1E3A8A;
+    color: white;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.help-card button:hover {
-    background-color: #0056b3;
+.pesquisa button:hover {
+    background-color: #274472;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #1E3A8A;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Rodapé */
+.footer {
+    background-color: #1E3A8A;
+    color: white;
+    text-align: center;
+    padding: 10px;
 }
