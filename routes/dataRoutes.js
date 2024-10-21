@@ -2,45 +2,55 @@ const express = require("express");
 const mysql = require("mysql2");
 const router = express.Router();
 
-//DEPLOY
-const db = mysql.createConnection({
-    host: "sql10.freesqldatabase.com",
-    user: "sql10739470",
-    password: "l7cTXGSlBW",
-    database: "sql10739470",
+// Create a connection pool
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || "sql10.freesqldatabase.com",
+    user: process.env.DB_USER || "sql10739470",
+    password: process.env.DB_PASSWORD || "l7cTXGSlBW",
+    database: process.env.DB_NAME || "sql10739470",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-//LOCAL
-// const db = mysql.createConnection({
-//     host: "localhost", // Altere se necessário
-//     user: "root", // Altere para seu usuário do MySQL
-//     password: "", // Altere para sua senha do MySQL
-//     database: "monitoramento_clima", // Nome do banco de dados
-// });
+// Create the table if it doesn't exist
+const createTableQuery = `
+CREATE TABLE IF NOT EXISTS dados_climaticos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    temperatura FLOAT NOT NULL,
+    umidade FLOAT NOT NULL,
+    pressao_atmosferica FLOAT NOT NULL,
+    data_hora DATETIME NOT NULL
+)
+`;
 
-db.connect((err) => {
+// Execute the create table query on startup
+pool.query(createTableQuery, (err) => {
     if (err) {
-        console.error("Erro ao conectar ao banco de dados:", err);
-        return;
+        console.error("Erro ao criar tabela:", err);
+    } else {
+        console.log("Tabela 'dados_climaticos' verificada/criada com sucesso.");
     }
-    console.log("Conectado ao banco de dados MySQL");
 });
 
-// Variável para armazenar dados dos sensores
+// Variable to store sensor data
 let sensorData = {};
 
-// Endpoint para receber dados do ESP32
+// Endpoint to receive data from ESP32
 router.post("/data", (req, res) => {
-    sensorData = req.body; // Armazena os dados recebidos
+    sensorData = req.body; // Store the received data
     console.log("Dados recebidos:", sensorData);
 
-    // Insere os dados no banco de dados
+    // Validate incoming data
     const { temperatura, umidade, pressao } = sensorData;
-    const data_hora = new Date(); // Obtém a data e hora atual
+    if (typeof temperatura !== 'number' || typeof umidade !== 'number' || typeof pressao !== 'number') {
+        return res.status(400).json({ message: "Dados inválidos" });
+    }
 
-    const query =
-        "INSERT INTO dados_climaticos (temperatura, umidade, pressao_atmosferica, data_hora) VALUES (?, ?, ?, ?)";
-    db.query(query, [temperatura, umidade, pressao, data_hora], (err, results) => {
+    const data_hora = new Date();
+
+    const query = "INSERT INTO dados_climaticos (temperatura, umidade, pressao_atmosferica, data_hora) VALUES (?, ?, ?, ?)";
+    pool.query(query, [temperatura, umidade, pressao, data_hora], (err, results) => {
         if (err) {
             console.error("Erro ao inserir dados:", err);
             return res.status(500).json({ message: "Erro ao inserir dados no banco de dados" });
@@ -49,11 +59,27 @@ router.post("/data", (req, res) => {
     });
 });
 
-// Endpoint para enviar os dados do sensor
+// Endpoint to send sensor data
 router.get("/sensordata", (req, res) => {
     console.log("Dados enviados:", sensorData);
-    res.json(sensorData); // Retorna os dados armazenados em formato JSON
+    res.json(sensorData); // Return the stored data as JSON
 });
 
-// Exporta o módulo router para outros arquivos
+// Endpoint to fetch climate data
+router.get("/historico", (req, res) => {
+    console.log("Received request for /historico"); // Debug log
+    const query = "SELECT data_hora, temperatura, umidade, pressao_atmosferica FROM dados_climaticos ORDER BY data_hora DESC";
+
+    pool.query(query, (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar dados:", err); // Log the error object
+            console.error("Erro ao buscar dados:", err.stack); // Log the error stack
+            return res.status(500).json({ message: "Erro ao buscar dados do banco de dados" });
+        }
+        res.json(results); // Return the results as JSON
+    });
+});
+
+// Export the router module for other files
 module.exports = router;
+
