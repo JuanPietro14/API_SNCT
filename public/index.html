@@ -1,48 +1,62 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estação Meteorológica</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Fonte Poppins do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Link para biblioteca de ícones (FontAwesome) -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </head>
+
 <body>
 
     <!-- Cabeçalho -->
     <header class="header">
-        <h1>Estação Meteorolócica</h1>
-        <nav>
-            <ul>
-                <li><a href="#dados-atualizados">Dados Atuais</a></li>
-                <li><a href="#dados-historicos">Dados Históricos</a></li>
-            </ul>
-        </nav>
+        <!--<img src="logo-ifnmg.png" id="logo-ifnmg">-->
+        <h1>Estação Meteorológica</h1>
     </header>
 
     <!-- Seção de Dados Atuais -->
     <section id="dados-atualizados" class="dados-atualizados">
-        <h2>Dados Meteorológicos Atuais</h2>
         <div class="cards">
             <div class="card">
-                <i class="fas fa-thermometer-half"></i>
                 <h3>Temperatura</h3>
-                <p><span id="temperatura">25°C</span></p>
+                <p><span id="temperatura">--</span></p>
             </div>
             <div class="card">
-                <i class="fas fa-tint"></i>
-                <h3>Umidade</h3>
-                <p><span id="umidade">60%</span></p>
-            </div>
-            <div class="card">
-                <i class="fas fa-tachometer-alt"></i>
                 <h3>Pressão</h3>
-                <p><span id="pressao">1015 hPa</span></p>
+                <p><span id="umidade">--</span></p>
             </div>
+            <div class="card">
+                <h3>Umidade</h3>
+                <p><span id="pressao">--</span></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="visualizacao">
+        <div class="graficos">
+            <div class="vis-temperatura">
+                <h1>Temperatura</h1>
+                <canvas id="temperatura-graf"></canvas>
+            </div>
+
+            <div class="vis-pressao">
+                <h1>Pressão</h1>
+                <canvas id="pressao-graf"></canvas>
+            </div>
+
+            <div class="vis-umidade">
+                <h1>Umidade</h1>
+                <canvas id="umidade-graf"></canvas>
+            </div>
+        </div>
+        <div class="pesquisa">
+            <input type="date" id="dataFinal">
+            <input type="time" id="horaFinal">
         </div>
     </section>
 
@@ -52,14 +66,12 @@
 
         <!-- Filtro de Pesquisa -->
         <div class="pesquisa">
-            <label for="dataInicial">Data Inicial:</label>
+            <label for="dataInicial">Início:</label>
             <input type="date" id="dataInicial">
-            <label for="horaInicial">Hora Inicial:</label>
             <input type="time" id="horaInicial">
 
-            <label for="dataFinal">Data Final:</label>
+            <label for="dataFinal">Término:</label>
             <input type="date" id="dataFinal">
-            <label for="horaFinal">Hora Final:</label>
             <input type="time" id="horaFinal">
 
             <button onclick="filtrarHistorico()">Buscar</button>
@@ -76,19 +88,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>12/10/2024 10:00</td>
-                    <td>24°C</td>
-                    <td>65%</td>
-                    <td>1012 hPa</td>
-                </tr>
-                <tr>
-                    <td>12/10/2024 09:00</td>
-                    <td>22°C</td>
-                    <td>70%</td>
-                    <td>1010 hPa</td>
-                </tr>
-                <!-- Mais registros podem ser adicionados aqui -->
+                <!-- Atualizado com as informações do banco de dados -->
             </tbody>
         </table>
     </section>
@@ -114,10 +114,10 @@
                 if (td) {
                     var txtValue = td.textContent || td.innerText;
                     var dataHora = new Date(txtValue);
-                    
+
                     var filtroInicial = new Date(dataInicial + 'T' + horaInicial);
                     var filtroFinal = new Date(dataFinal + 'T' + horaFinal);
-                    
+
                     if (dataHora >= filtroInicial && dataHora <= filtroFinal) {
                         tr[i].style.display = "";
                     } else {
@@ -128,5 +128,152 @@
         }
     </script>
 
+    <script>
+        // Create the charts initially
+        const ctx = document.getElementById('temperatura-graf');
+        const ctx2 = document.getElementById('pressao-graf');
+        const ctx3 = document.getElementById('umidade-graf');
+
+        const myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Initially empty
+                datasets: [{
+                    label: 'Temperatura',
+                    data: [], // Initially empty
+                    fill: true,
+                    backgroundColor: 'rgb(252, 136, 136)',
+                    borderColor: 'rgb(252, 37, 37)',
+                    pointRadius: 1,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 40
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const myLineChart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [], // Initially empty
+                datasets: [{
+                    label: 'Pressão',
+                    data: [], // Initially empty
+                    fill: true,
+                    backgroundColor: 'rgb(105, 206, 206)',
+                    borderColor: 'rgb(75, 192, 192)',
+                    pointRadius: 1,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                        }
+                    },
+                    y: {
+                        min: 900,
+                        max: 1100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const myLineChart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: [], // Initially empty
+                datasets: [{
+                    label: 'Umidade',
+                    data: [], // Initially empty
+                    fill: true,
+                    backgroundColor: 'rgb(85, 174, 252)',
+                    borderColor: 'rgb(37, 152, 252)',
+                    pointRadius: 1,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        function updateCharts() {
+            fetch('http://localhost:3000/api/historico')
+                .then(response => response.json())
+                .then(data => {
+                    // Formatar hora
+                    const hora = data.map(item => {
+                        const date = new Date(item.data_hora);
+                        // Convert to GMT-3
+                        const gmtMinus3 = new Date(date.getTime() - (3 * 60 * 60 * 1000));
+                        return gmtMinus3.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    });
+
+                    // Update the chart data
+                    myLineChart.data.labels = hora.reverse();
+                    myLineChart.data.datasets[0].data = data.map(item => item.temperatura).reverse();
+                    myLineChart.update();
+
+                    myLineChart2.data.labels = hora.reverse().reverse();
+                    myLineChart2.data.datasets[0].data = data.map(item => item.pressao_atmosferica).reverse();
+                    myLineChart2.update();
+
+                    myLineChart3.data.labels = hora.reverse().reverse();
+                    myLineChart3.data.datasets[0].data = data.map(item => item.umidade).reverse();
+                    myLineChart3.update();
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Call updateCharts every 2 seconds
+        setInterval(updateCharts, 2000);
+    </script>
+
 </body>
+
 </html>
