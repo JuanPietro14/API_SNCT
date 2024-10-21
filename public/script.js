@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = 'scale(1)';
         }, index * 200);
     });
+
+    // Chama as funções ao carregar a página
+    fetchSensorData();
+    fetchHistoricData();
+
+    // Atualiza os dados a cada 2s
+    setInterval(fetchSensorData, 2000);
+    setInterval(fetchHistoricData, 2000);
 });
 
 ////////////
@@ -15,10 +23,15 @@ function fetchSensorData() {
     fetch('/api/sensordata') // Faz a requisição para a API
         .then(response => response.json())
         .then(data => {
+            // Verificar se os dados estão definidos
+            temperatura = data.temperatura !== undefined ? `${data.temperatura}°C` : '--';
+            pressao = data.pressao !== undefined ? `${data.pressao} hPa` : '--';
+            umidade = data.umidade !== undefined ? `${data.umidade}%` : '--';
+
             // Atualizar os valores no HTML
-            document.querySelector('.card:nth-child(1) p').textContent = `A temperatura agora é ${data.temperatura}°C.`;
-            document.querySelector('.card:nth-child(2) p').textContent = `A pressão agora é ${data.pressao} hPa.`;
-            document.querySelector('.card:nth-child(3) p').textContent = `A umidade agora é ${data.umidade}%.`;
+            document.querySelector('.card:nth-child(1) p').textContent = temperatura;
+            document.querySelector('.card:nth-child(2) p').textContent = pressao;
+            document.querySelector('.card:nth-child(3) p').textContent = umidade;
         })
         .catch(error => console.error('Erro ao buscar dados:', error));
 }
@@ -32,12 +45,24 @@ function toggleHelpCard() {
     }
 }
 
-// Chama a função ao carregar a página
-window.onload = fetchSensorData;
+async function fetchHistoricData() {
+    try {
+        const response = await fetch('/api/historico');
+        const data = await response.json();
+        const tableBody = document.querySelector('#historicoTable tbody');
+        tableBody.innerHTML = ''; // Clear existing rows
 
-
-setInterval(fetchSensorData, 5000);
-
-//setInterval(() => {
- //   window.location.reload(); // Recarrega a página
-//}, 5000);
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${new Date(row.data_hora).toLocaleString()}</td>
+                <td>${row.temperatura} °C</td>
+                <td>${row.umidade} %</td>
+                <td>${row.pressao_atmosferica} hPa</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+    }
+}
