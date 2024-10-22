@@ -8,6 +8,7 @@ app.use(express.static('public'));
 
 // Middleware to accept JSON
 app.use(express.json());
+
 app.use(cors());
 
 // Import API routes
