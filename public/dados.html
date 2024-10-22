@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estação Meteorológica</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <!--<img src="logo-ifnmg.png" id="logo-ifnmg">-->
+        <h1>Estação Meteorológica</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="dados.html">Dados brutos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Seção de Dados Históricos -->
+    <section id="dados-historicos" class="dados-historicos">
+        <h2>Dados Históricos</h2>
+
+        <!-- Filtro de Pesquisa -->
+        <div class="pesquisa">
+            <label for="dataInicial">Início:</label>
+            <input type="date" id="dataInicial">
+            <input type="time" id="horaInicial">
+
+            <label for="dataFinal">Término:</label>
+            <input type="date" id="dataFinal">
+            <input type="time" id="horaFinal">
+
+            <button onclick="filtrarHistorico()">Buscar</button>
+        </div>
+
+        <!-- Tabela de Dados Históricos -->
+        <table id="historicoTable">
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Temperatura (°C)</th>
+                    <th>Umidade (%)</th>
+                    <th>Pressão (hPa)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Atualizado com as informações do banco de dados -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <p>Estação Meteorológica &copy; 2024</p>
+    </footer>
+</body>
+
+</html>
