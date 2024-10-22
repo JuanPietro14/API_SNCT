@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 
 // Middleware to serve static files from the 'public' directory
@@ -7,6 +8,7 @@ app.use(express.static('public'));
 
 // Middleware to accept JSON
 app.use(express.json());
+app.use(cors());
 
 // Import API routes
 const dataRoutes = require('./routes/dataRoutes');
