@@ -17,22 +17,28 @@
     <header class="header">
         <!--<img src="logo-ifnmg.png" id="logo-ifnmg">-->
         <h1>Estação Meteorológica</h1>
+        <nav>
+            <ul>
+                <li><a href=".">Dashboard</a></li>
+                <li><a href="dados.html">Dados brutos</a></li>
+            </ul>
+        </nav>
     </header>
 
     <!-- Seção de Dados Atuais -->
     <section id="dados-atualizados" class="dados-atualizados">
         <div class="cards">
             <div class="card">
-                <h3>Temperatura</h3>
+                <h3>🌡️ Temperatura</h3>
                 <p><span id="temperatura">--</span></p>
             </div>
             <div class="card">
-                <h3>Pressão</h3>
-                <p><span id="umidade">--</span></p>
+                <h3>🌪️ Pressão</h3>
+                <p><span id="pressao">--</span></p>
             </div>
             <div class="card">
-                <h3>Umidade</h3>
-                <p><span id="pressao">--</span></p>
+                <h3>💧 Umidade</h3>
+                <p><span id="umidade">--</span></p>
             </div>
         </div>
     </section>
@@ -55,81 +61,36 @@
             </div>
         </div>
         <div class="pesquisa">
-            <input type="date" id="dataFinal">
-            <input type="time" id="horaFinal">
-        </div>
-    </section>
+            <div id="inicio">
+                <label for="dataInicio">Início:</label>
+                <input type="date" id="dataInicio">
+                <input type="time" id="horaInicio">
+            </div>
+            <div id="fim">
+                <label for="dataFinal">Término:</label>
+                <input type="date" id="dataFinal">
+                <input type="time" id="horaFinal">
+            </div>
 
-    <!-- Seção de Dados Históricos -->
-    <section id="dados-historicos" class="dados-historicos">
-        <h2>Dados Históricos</h2>
-
-        <!-- Filtro de Pesquisa -->
-        <div class="pesquisa">
-            <label for="dataInicial">Início:</label>
-            <input type="date" id="dataInicial">
-            <input type="time" id="horaInicial">
-
-            <label for="dataFinal">Término:</label>
-            <input type="date" id="dataFinal">
-            <input type="time" id="horaFinal">
-
-            <button onclick="filtrarHistorico()">Buscar</button>
+            <button id="filtrar" onclick="filtrar()">Filtrar</button>
+            <button id="filtrar" onclick="redefinir()">Redefinir</button>
         </div>
 
-        <!-- Tabela de Dados Históricos -->
-        <table id="historicoTable">
-            <thead>
-                <tr>
-                    <th>Data/Hora</th>
-                    <th>Temperatura (°C)</th>
-                    <th>Umidade (%)</th>
-                    <th>Pressão (hPa)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Atualizado com as informações do banco de dados -->
-            </tbody>
-        </table>
     </section>
+
+
 
     <!-- Rodapé -->
     <footer class="footer">
         <p>Estação Meteorológica &copy; 2024</p>
     </footer>
 
-    <!-- Script para filtrar os dados históricos -->
     <script>
-        function filtrarHistorico() {
-            var dataInicial = document.getElementById('dataInicial').value;
-            var horaInicial = document.getElementById('horaInicial').value;
-            var dataFinal = document.getElementById('dataFinal').value;
-            var horaFinal = document.getElementById('horaFinal').value;
+        // Variáveis globais para armazenar o intervalo de filtro
+        let filtroInicio = null;
+        let filtroFinal = null;
 
-            var table = document.getElementById('historicoTable');
-            var tr = table.getElementsByTagName('tr');
-
-            for (var i = 1; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName('td')[0]; // Coluna de data/hora
-                if (td) {
-                    var txtValue = td.textContent || td.innerText;
-                    var dataHora = new Date(txtValue);
-
-                    var filtroInicial = new Date(dataInicial + 'T' + horaInicial);
-                    var filtroFinal = new Date(dataFinal + 'T' + horaFinal);
-
-                    if (dataHora >= filtroInicial && dataHora <= filtroFinal) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
-
-    <script>
-        // Create the charts initially
+        // Criação inicial dos gráficos
         const ctx = document.getElementById('temperatura-graf');
         const ctx2 = document.getElementById('pressao-graf');
         const ctx3 = document.getElementById('umidade-graf');
@@ -137,10 +98,10 @@
         const myLineChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [], // Initially empty
+                labels: [], // Inicialmente vazio
                 datasets: [{
                     label: 'Temperatura',
-                    data: [], // Initially empty
+                    data: [], // Inicialmente vazio
                     fill: true,
                     backgroundColor: 'rgb(252, 136, 136)',
                     borderColor: 'rgb(252, 37, 37)',
@@ -154,7 +115,7 @@
                     x: {
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                            maxTicksLimit: 10 // Limitar o número de ticks no eixo x
                         }
                     },
                     y: {
@@ -166,17 +127,18 @@
                     legend: {
                         display: false
                     }
-                }
+                },
+                animation: false
             }
         });
 
         const myLineChart2 = new Chart(ctx2, {
             type: 'line',
             data: {
-                labels: [], // Initially empty
+                labels: [], // Inicialmente vazio
                 datasets: [{
                     label: 'Pressão',
-                    data: [], // Initially empty
+                    data: [], // Inicialmente vazio
                     fill: true,
                     backgroundColor: 'rgb(105, 206, 206)',
                     borderColor: 'rgb(75, 192, 192)',
@@ -190,7 +152,7 @@
                     x: {
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                            maxTicksLimit: 10 // Limitar o número de ticks no eixo x
                         }
                     },
                     y: {
@@ -202,17 +164,18 @@
                     legend: {
                         display: false
                     }
-                }
+                },
+                animation: false
             }
         });
 
         const myLineChart3 = new Chart(ctx3, {
             type: 'line',
             data: {
-                labels: [], // Initially empty
+                labels: [], // Inicialmente vazio
                 datasets: [{
                     label: 'Umidade',
-                    data: [], // Initially empty
+                    data: [], // Inicialmente vazio
                     fill: true,
                     backgroundColor: 'rgb(85, 174, 252)',
                     borderColor: 'rgb(37, 152, 252)',
@@ -226,7 +189,7 @@
                     x: {
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 10 // Limit the number of ticks on the x-axis
+                            maxTicksLimit: 10 // Limitar o número de ticks no eixo x
                         }
                     },
                     y: {
@@ -238,10 +201,13 @@
                     legend: {
                         display: false
                     }
-                }
+                },
+                animation: false
             }
         });
 
+        // Função para atualizar os gráficos
+        // Função para atualizar os gráficos
         function updateCharts() {
             fetch('http://localhost:3000/api/historico')
                 .then(response => response.json())
@@ -249,29 +215,139 @@
                     // Formatar hora
                     const hora = data.map(item => {
                         const date = new Date(item.data_hora);
-                        // Convert to GMT-3
                         const gmtMinus3 = new Date(date.getTime() - (3 * 60 * 60 * 1000));
                         return gmtMinus3.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
                     });
 
-                    // Update the chart data
+                    // Atualizar dados gerais
                     myLineChart.data.labels = hora.reverse();
                     myLineChart.data.datasets[0].data = data.map(item => item.temperatura).reverse();
-                    myLineChart.update();
 
-                    myLineChart2.data.labels = hora.reverse().reverse();
+                    myLineChart2.data.labels = hora;
                     myLineChart2.data.datasets[0].data = data.map(item => item.pressao_atmosferica).reverse();
-                    myLineChart2.update();
 
-                    myLineChart3.data.labels = hora.reverse().reverse();
+                    myLineChart3.data.labels = hora;
                     myLineChart3.data.datasets[0].data = data.map(item => item.umidade).reverse();
-                    myLineChart3.update();
+
+                    // Aplicar o filtro se estiver definido
+                    if (filtroInicio && filtroFinal) {
+                        // Filtrar os dados com base nas datas em GMT
+                        const dadosFiltrados = data.filter(item => {
+                            const dataHoraItemGMT = new Date(item.data_hora).toISOString();
+                            return dataHoraItemGMT >= filtroInicio && dataHoraItemGMT <= filtroFinal;
+                        });
+
+                        if (dadosFiltrados.length === 0) {
+                            alert("Nenhum dado encontrado para o intervalo selecionado.");
+                            return;
+                        }
+
+                        // Formatar a hora para exibição (convertendo de GMT para local)
+                        const horaFiltrada = dadosFiltrados.map(item => {
+                            const date = new Date(item.data_hora);
+                            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                        });
+
+                        // Atualizar os gráficos com os dados filtrados
+                        myLineChart.data.labels = horaFiltrada.reverse();
+                        myLineChart.data.datasets[0].data = dadosFiltrados.map(item => item.temperatura);
+                        myLineChart.update();
+
+                        myLineChart2.data.labels = horaFiltrada;
+                        myLineChart2.data.datasets[0].data = dadosFiltrados.map(item => item.pressao_atmosferica);
+                        myLineChart2.update();
+
+                        myLineChart3.data.labels = horaFiltrada;
+                        myLineChart3.data.datasets[0].data = dadosFiltrados.map(item => item.umidade);
+                        myLineChart3.update();
+                    } else {
+                        // Atualizar gráficos com dados gerais
+                        myLineChart.update();
+                        myLineChart2.update();
+                        myLineChart3.update();
+                    }
                 })
                 .catch(error => console.error(error));
         }
 
-        // Call updateCharts every 2 seconds
-        setInterval(updateCharts, 2000);
+        // Função para converter data e hora local para GMT (UTC)
+        function localToGMT(dateString, timeString) {
+            const localDateTime = new Date(`${dateString}T${timeString}:00`);
+            return localDateTime.toISOString(); // Converte para o formato GMT (ISO 8601)
+        }
+
+        // Função para filtrar os dados
+        function filtrar() {
+            const dataInicio = document.getElementById('dataInicio').value;
+            const horaInicio = document.getElementById('horaInicio').value;
+            const dataFinal = document.getElementById('dataFinal').value;
+            const horaFinal = document.getElementById('horaFinal').value;
+
+            // Verificar se todas as entradas foram preenchidas
+            if (!dataInicio || !horaInicio || !dataFinal || !horaFinal) {
+                alert("Por favor, preencha todas as datas e horas.");
+                return;
+            }
+
+            // Converter para GMT (UTC)
+            const inicioGMT = localToGMT(dataInicio, horaInicio);
+            const finalGMT = localToGMT(dataFinal, horaFinal);
+
+            // Armazenar os filtros
+            filtroInicio = inicioGMT;
+            filtroFinal = finalGMT;
+
+            // Fazer a requisição à API com os parâmetros de filtro em GMT
+            fetch(`http://localhost:3000/api/historico?inicio=${inicioGMT}&final=${finalGMT}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Filtrar os dados com base nas datas em GMT
+                    const dadosFiltrados = data.filter(item => {
+                        const dataHoraItemGMT = new Date(item.data_hora).toISOString();
+                        return dataHoraItemGMT >= inicioGMT && dataHoraItemGMT <= finalGMT;
+                    });
+
+                    if (dadosFiltrados.length === 0) {
+                        alert("Nenhum dado encontrado para o intervalo selecionado.");
+                        return;
+                    }
+
+                    // Formatar a hora para exibição (convertendo de GMT para local)
+                    const hora = dadosFiltrados.map(item => {
+                        const date = new Date(item.data_hora);
+                        return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    });
+
+                    // Atualizar os gráficos com os dados filtrados
+                    myLineChart.data.labels = hora.reverse();
+                    myLineChart.data.datasets[0].data = dadosFiltrados.map(item => item.temperatura);
+                    myLineChart.update();
+
+                    myLineChart2.data.labels = hora;
+                    myLineChart2.data.datasets[0].data = dadosFiltrados.map(item => item.pressao_atmosferica);
+                    myLineChart2.update();
+
+                    myLineChart3.data.labels = hora;
+                    myLineChart3.data.datasets[0].data = dadosFiltrados.map(item => item.umidade);
+                    myLineChart3.update();
+                })
+                .catch(error => console.error('Erro ao filtrar:', error));
+        }
+
+        // Função para redefinir os filtros e gráficos
+        function redefinir() {
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('horaInicio').value = '';
+            document.getElementById('dataFinal').value = '';
+            document.getElementById('horaFinal').value = '';
+
+            // Limpar filtros
+            filtroInicio = null;
+            filtroFinal = null;
+
+            // Recarregar os dados completos
+            updateCharts();
+        }
     </script>
 
 </body>
