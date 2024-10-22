@@ -16,7 +16,6 @@ body {
 h1,
 h2 {
     color: var(--cor-fundo);
-    /* Azul escuro */
     text-align: center;
 }
 
@@ -27,7 +26,6 @@ h3 {
 /* Cabeçalho */
 .header {
     background-color: var(--cor-fundo);
-    /* Azul escuro */
     color: white;
     padding: 20px;
     text-align: center;

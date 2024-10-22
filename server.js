@@ -1,14 +1,6 @@
 const express = require('express');
-const helmet = require('helmet'); // For security
-const cors = require('cors'); // For CORS
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Middleware for security
-app.use(helmet());
-
-// Middleware to enable CORS
-app.use(cors());
 
 // Middleware to serve static files from the 'public' directory
 app.use(express.static('public'));
